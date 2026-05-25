@@ -1,16 +1,15 @@
-package com.example.lab_3.ui
+package com.example.lab_3.ui.screens
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.lab_3.ContactsViewModel
+import com.example.lab_3.ui.viewmodel.ContactsViewModel
 
 @Composable
-fun AppNavigation(viewModel: ContactsViewModel = viewModel()) {
+fun AppNavigation(viewModel: ContactsViewModel) {
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "list") {
@@ -48,9 +47,8 @@ fun AppNavigation(viewModel: ContactsViewModel = viewModel()) {
                 contactId = contactId,
                 onNavigateBack = { navController.popBackStack() },
                 onNavigateToEdit = { id -> navController.navigate("add?contactId=$id") },
-                onDelete = {
-                    viewModel.deleteContact(contactId)
-                    navController.popBackStack()
+                onNavigateHome = {
+                    navController.popBackStack("list", inclusive = false)
                 }
             )
         }

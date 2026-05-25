@@ -1,4 +1,4 @@
-package com.example.lab_3.ui
+package com.example.lab_3.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
@@ -9,7 +9,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.lab_3.ContactsViewModel
+import com.example.lab_3.ui.viewmodel.ContactsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -27,11 +27,12 @@ fun AddContactScreen(
 
     LaunchedEffect(contactIdToEdit) {
         if (contactIdToEdit != null) {
-            val contact = viewModel.getContactById(contactIdToEdit)
-            if (contact != null) {
-                name = contact.name
-                phoneNumber = contact.phoneNumber
-                email = contact.email
+            viewModel.getContactById(contactIdToEdit).collect { contact ->
+                if (contact != null) {
+                    name = contact.name
+                    phoneNumber = contact.phoneNumber
+                    email = contact.email
+                }
             }
         }
     }

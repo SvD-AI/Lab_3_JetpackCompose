@@ -1,4 +1,4 @@
-package com.example.lab_3.ui
+package com.example.lab_3.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
@@ -16,7 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.example.lab_3.ContactsViewModel
+import com.example.lab_3.ui.viewmodel.ContactsViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -25,12 +25,12 @@ fun DetailsContactScreen(
     contactId: String,
     onNavigateBack: () -> Unit,
     onNavigateToEdit: (String) -> Unit,
-    onDelete: () -> Unit
+    onNavigateHome: () -> Unit
 ) {
-    val contacts by viewModel.contacts.collectAsState()
-    val contact = contacts.find { it.id == contactId }
+    val contact by viewModel.getContactById(contactId).collectAsState(initial = null)
 
     if (contact == null) {
+        // You could show a loading indicator or error here
         return
     }
 
@@ -47,7 +47,12 @@ fun DetailsContactScreen(
                     IconButton(onClick = { onNavigateToEdit(contactId) }) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit")
                     }
-                    IconButton(onClick = onDelete) {
+                    IconButton(onClick = {
+                        contact?.let { 
+                            viewModel.deleteContact(it) 
+                            onNavigateHome()
+                        }
+                    }) {
                         Icon(Icons.Default.Delete, contentDescription = "Delete", tint = MaterialTheme.colorScheme.error)
                     }
                 },
@@ -73,7 +78,7 @@ fun DetailsContactScreen(
             )
 
             Text(
-                text = contact.name,
+                text = contact!!.name,
                 style = MaterialTheme.typography.headlineMedium
             )
 
@@ -85,10 +90,10 @@ fun DetailsContactScreen(
                     modifier = Modifier.padding(16.dp),
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    DetailItem(icon = Icons.Default.Phone, label = "Phone Number", value = contact.phoneNumber)
-                    if (contact.email.isNotBlank()) {
+                    DetailItem(icon = Icons.Default.Phone, label = "Phone Number", value = contact!!.phoneNumber)
+                    if (contact!!.email.isNotBlank()) {
                         HorizontalDivider()
-                        DetailItem(icon = Icons.Default.Email, label = "Email", value = contact.email)
+                        DetailItem(icon = Icons.Default.Email, label = "Email", value = contact!!.email)
                     }
                 }
             }
